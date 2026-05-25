@@ -37,24 +37,33 @@ namespace TanciskolaGUI
             {
                 l2.IsEnabled = true;
                 cb2.IsEnabled = true;
+
+                List<Tanar> tlist = new List<Tanar>();
+
                 var tanarok1 = tarolo.Orarends
                     .Include(x => x.TancNavigation)
                     .Include(x => x.Tanar1Navigation)
                     .Where(x => x.Tanc == selTanc.TancId)
                     .Select(x => x.Tanar1Navigation)
-                    .OrderBy(x => x.Nev);
-                ;
+                    .Distinct()
+                    .OrderBy(x => x.Nev)
+                    .ToList();
 
-                //var tanarok2 = tarolo.Orarends
-                //    .Include(x => x.TancNavigation)
-                //    .Include(x => x.Tanar2Navigation)
-                //    .ToList().Where(x => x.Tanc == selTanc.TancId)
-                //    .Select(x => x.Tanar2Navigation)
-                //    .OrderBy(x => x.Nev);
-                //    ;
-                //cb2.ItemsSource = tanarok1.Union(tanarok2).Distinct();
 
-                cb2.ItemsSource = tanarok1.Distinct().ToList();
+                var tanarok2 = tarolo.Orarends
+                    .Include(x => x.TancNavigation)
+                    .Include(x => x.Tanar2Navigation)
+                    .Where(x => x.Tanc == selTanc.TancId)
+                    .Select(x => x.Tanar2Navigation)
+                    .Where(x => x != null)
+                    .Distinct()
+                    .OrderBy(x => x!.Nev)
+                    .ToList();
+
+                tlist.AddRange(tanarok1);
+                tlist.AddRange(tanarok2!);
+
+                cb2.ItemsSource = tlist;
 
                 cb2.DisplayMemberPath = "Nev";
             }
